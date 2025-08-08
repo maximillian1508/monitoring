@@ -61,5 +61,5 @@ volumes:
 
 networks:
   monitoring-network:
-    driver: bridge
-    name: monitoring-network
+    external: true
+    name: easyrent_easyrent-network

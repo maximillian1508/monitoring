@@ -10,16 +10,16 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  # EasyRent MERN Stack
+  # EasyRent MERN Stack (using container names)
   - job_name: 'easyrent-backend'
     static_configs:
-      - targets: ['host.docker.internal:4001']
+      - targets: ['easyrent-backend:4001']
     metrics_path: '/metrics'
     scrape_interval: 5s
 
   - job_name: 'easyrent-nginx'
     static_configs:
-      - targets: ['host.docker.internal:9113']
+      - targets: ['easyrent-nginx-exporter:9113']
     metrics_path: '/metrics'
     scrape_interval: 5s
 
