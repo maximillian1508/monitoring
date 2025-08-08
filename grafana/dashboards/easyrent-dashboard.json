@@ -1,0 +1,274 @@
+{
+  "id": null,
+  "uid": "easyrent-technical",
+  "title": "EasyRent Technical Performance Dashboard",
+    "tags": ["easyrent", "nodejs", "performance", "technical"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "🚀 Request Rate (req/sec)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total{route!=\"/metrics\"}[5m]))",
+            "legendFormat": "Requests/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 10 },
+                { "color": "red", "value": 50 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 }
+      },
+      {
+        "id": 2,
+        "title": "⚡ Response Time (95th %ile)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{route!=\"/metrics\"}[5m])) by (le))",
+            "legendFormat": "95th percentile"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 1 },
+                { "color": "red", "value": 2 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 }
+      },
+      {
+        "id": 3,
+        "title": "❌ Error Rate (%)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "(sum(rate(http_request_errors_total{route!=\"/metrics\"}[1m])) / sum(rate(http_requests_total{route!=\"/metrics\"}[1m]))) * 100",
+            "legendFormat": "Error Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 1 },
+                { "color": "red", "value": 5 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 }
+      },
+      {
+        "id": 4,
+        "title": "🧠 Memory Usage (%)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "memory_usage_percent",
+            "legendFormat": "Memory %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 70 },
+                { "color": "red", "value": 80 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 }
+      },
+      {
+        "id": 5,
+        "title": "📊 Response Time Percentiles",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "50th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "99th percentile"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "s" }
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 }
+      },
+      {
+        "id": 6,
+        "title": "🔥 API Endpoint Usage (Popularity)",
+        "type": "barchart",
+        "targets": [
+          {
+            "expr": "topk(10, rate(api_endpoint_usage_total[5m]))",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 }
+      },
+      {
+        "id": 7,
+        "title": "💾 Database Connection Pool",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "database_connections_active",
+            "legendFormat": "Active Connections"
+          },
+          {
+            "expr": "database_connections_idle",
+            "legendFormat": "Idle Connections"
+          },
+          {
+            "expr": "database_connections_total",
+            "legendFormat": "Total Connections"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 }
+      },
+      {
+        "id": 8,
+        "title": "⏱️ Database Query Performance",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(database_query_duration_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile query time"
+          },
+          {
+            "expr": "rate(database_queries_total[5m])",
+            "legendFormat": "Queries per second"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "s" }
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 }
+      },
+      {
+        "id": 9,
+        "title": "💻 System Resources",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "memory_usage_percent",
+            "legendFormat": "Memory Usage %"
+          },
+          {
+            "expr": "cpu_usage_percent",
+            "legendFormat": "CPU Usage %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "percent" }
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 22 }
+      },
+      {
+        "id": 10,
+        "title": "🌐 HTTP Request/Response Sizes",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_size_bytes_bucket[5m]))",
+            "legendFormat": "Request Size (95th %ile)"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(http_response_size_bytes_bucket[5m]))",
+            "legendFormat": "Response Size (95th %ile)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { "unit": "bytes" }
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 22 }
+      },
+      {
+        "id": 11,
+        "title": "⚙️ Node.js Event Loop Lag",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "nodejs_event_loop_lag_seconds",
+            "legendFormat": "Event Loop Lag"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": { 
+            "unit": "s",
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 0.01 },
+                { "color": "red", "value": 0.1 }
+              ]
+            }
+          }
+        },
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 22 }
+      },
+      {
+        "id": 12,
+        "title": "📈 Request Traffic Heatmap (Last 6 Hours)",
+        "type": "heatmap",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])",
+            "legendFormat": "Requests"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 30 }
+      },
+      {
+        "id": 13,
+        "title": "🔍 Error Rate by Status Code",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(http_request_errors_total[5m])",
+            "legendFormat": "{{status_code}} - {{error_type}}"
+          }
+        ],
+        "gridPos": { "h": 8, "w": 24, "x": 0, "y": 38 }
+      }
+    ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "5s"
+}
